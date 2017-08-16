@@ -1,0 +1,13 @@
+#!/bin/tcsh -l
+echo "running matlab test script"
+
+#module load matlab
+eval `/nerc/packages/lmod/lmod/libexec/lmod csh load matlab` ; eval `: -s csh`
+echo 'run eval line'
+
+which matlab
+
+#matlab -nodisplay -nodesktop -nosplash <<FIN
+#disp('Running Matlab');
+#FIN
+

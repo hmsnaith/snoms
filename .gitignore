@@ -1,0 +1,29 @@
+# Directories/links to ignore
+concat_current
+test_concat/
+web/
+web_online
+logs/
+snoms/
+
+# File types to ignore
+# Compiled code
+*.pyc
+
+# data/graphics files
+
+# log files
+
+# Graphics files
+*.eps
+*.png
+*.jpg
+*.tif
+
+# Any backup files from matlab
+*\~
+
+# MacOS & Windows indexing
+.DS_Store
+Thumbs.db
+\._*
