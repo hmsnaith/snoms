@@ -161,20 +161,20 @@ p = snoms_plot_single(sensors,params,paramid,cols,manufacturer,ifsave);
 snoms_plot_multi(sensors,params,paramid,cols,manufacturer,f);
 
 %% Gas Transfer Device - plot total dissolved Gas P and diff to atmospheric
-% manufacturer='Pro-Oceanus';
-% sensors = {gtd_ext}; % files holding parameters
-% params  = {'Total Dissolved Gas Pressure (mbar)'};
-% paramid = {'gt'};
-% cols = 3; % column in the file that each parameter is held
-% g = snoms_plot_single(sensors,params,paramid,cols,manufacturer,[1 1]);
+manufacturer='Pro-Oceanus';
+sensors = {gtd_ext}; % files holding parameters
+params  = {'Total Dissolved Gas Pressure (mbar)'};
+paramid = {'gt'};
+cols = 3; % column in the file that each parameter is held
+g = snoms_plot_single(sensors,params,paramid,cols,manufacturer,[1 1]);
 
 % Derived - need to interpolate GTD to Atmospheric pressure
-% if ~ isempty(p) && ~ isempty(g)
-  % t1='GTD - Atmospheric Pressure';
-  % b = resample(g, p.time(p.time>=g.time(1)&p.time<=g.time(end)));
-  % b.data = b.data-p.data(p.time>=g.time(1)&p.time<=g.time(end));
-  % snoms_plot(b.time, b.data, web_dir, 'derived_1', t1, t2, x_lab, 'mbar');
-% end
+if ~ isempty(p) && ~ isempty(g)
+  t1='GTD - Atmospheric Pressure';
+  b = resample(g, p.time(p.time>=g.time(1)&p.time<=g.time(end)));
+  b.data = b.data-p.data(p.time>=g.time(1)&p.time<=g.time(end));
+  snoms_plot(b.time, b.data, web_dir, 'derived_1', t1, t2, x_lab, 'mbar');
+end
 
 %% Conductivity
 manufacturer='Aanderaa';
@@ -198,8 +198,8 @@ snoms_plot_multi(sensors,params,paramid,cols,manufacturer,f);
 
 %% Dissolved CO2
 manufacturer='Pro';
-sensors = {cob_ext}; % files holding parameters
-%sensors = {coa_ext; cob_ext}; % files holding parameters
+sensors = {coa_ext; cob_ext}; % files holding parameters
+%sensors = {cob_ext}; % files holding parameters
 params  = {'CO_2 concentration (ppm)';
            'Cell Temperature (\circC)';
            'Gas Humidity (mbar)';
@@ -216,15 +216,15 @@ snoms_plot_single(sensors,params,paramid,cols,manufacturer);
 snoms_plot_multi(sensors,params,paramid,cols,manufacturer,f);
 
 %% Fluorimeter measurements
-% manufacturer = 'Turner';
-% sensors = {tc3_ext}; % files holding parameters
-% params  = {'Turbidity (NTU)';
-           % 'Realtive Fluoresence ';
-           % 'CDOM (ppb)'};
-% paramid = {'turbidity';
-           % 'chl';
-           % 'cdom'};
-% cols = 3:5; % column in the file that each parameter is held
+manufacturer = 'Turner';
+sensors = {tc3_ext}; % files holding parameters
+params  = {'Turbidity (NTU)';
+           'Realtive Fluoresence ';
+           'CDOM (ppb)'};
+paramid = {'turbidity';
+           'chl';
+           'cdom'};
+cols = 3:5; % column in the file that each parameter is held
 
 snoms_plot_single(sensors,params,paramid,cols,manufacturer);
 
