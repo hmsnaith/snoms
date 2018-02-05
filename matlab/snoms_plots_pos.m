@@ -8,7 +8,7 @@ function snoms_plots_pos(fyear,fjday,iftest)
 % ...
 
 % Set date strings and values
-start_date=datenum(fyear,1,1) + fjday;
+start_date=datenum(fyear,1,1) + fjday - 1;
 deploy_date = datestr(start_date,'ddmmmyyyy');
 dir_date = [num2str(fyear,'%4.4d') '_' num2str(fjday,'%3.3d')];
 
@@ -33,7 +33,7 @@ f_root = ['all_SNOMS_' deploy_date '.'];
 web_dir=[web_dir_snoms '/graphs/' dir_date '/']; % Current deployment directory
 % Setting some graph label and file naming defaults
 x_lab='Date';
-t2=['Crossing beginning: ' datestr(start_date+1,1)];
+t2=['Crossing beginning: ' datestr(start_date,1)];
 
 if ~ exist(merged_dir,'dir')
   disp(['Source data directory ' merged_dir ' does not exist - no updating']);

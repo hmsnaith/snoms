@@ -11,9 +11,11 @@ alias matlab /nerc/packages/matlab/2015b/bin/matlab
 matlab -nodisplay -nodesktop -nosplash <<FIN
 disp('Running Matlab');
 
-fyear=2016;
+fyear=2018;
 %fjday=238;
-fjday=333;
+%fjday=333;
+%fjday=273;
+fjday=017;
 snoms_plots_pos(fyear,fjday);
 FIN
 

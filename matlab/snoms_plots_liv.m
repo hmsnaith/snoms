@@ -28,7 +28,7 @@ function snoms_plots_liv(fyear,fjday,iftest)
 % ...
 
 % Set date strings and values
-start_date=datenum(fyear,1,1) + fjday;
+start_date=datenum(fyear,1,1) + fjday - 1;
 deploy_date = datestr(start_date,'ddmmmyyyy');
 dir_date = [num2str(fyear,'%4.4d') '_' num2str(fjday,'%3.3d')];
 
@@ -54,7 +54,7 @@ web_dir=[web_dir_snoms '/graphs/' dir_date '/']; % Current deployment directory
 text_file=['page_data_' dir_date '.txt']; % web file of current deployment start / end
 % Setting some graph label and file naming defaults
 x_lab='Date';
-t2=['Crossing beginning: ' datestr(start_date+1,1)];
+t2=['Crossing beginning: ' datestr(start_date,1)];
 
 if ~ exist(merged_dir,'dir')
   disp(['Source data directory ' merged_dir ' does not exist - no updating']);
@@ -184,7 +184,7 @@ params  = {'Conductivity (mS/cm)';
 paramid = {'conductivity';
             'salinity'}; % short name for parameter
 %cols = [3,5]; % columns in file we want %worked for Nov 2015 deployment
-cols = [3,4];
+cols = [3,5];
 snoms_plot_multi(sensors,params,paramid,cols,manufacturer,f);
 
 
@@ -198,7 +198,8 @@ snoms_plot_multi(sensors,params,paramid,cols,manufacturer,f);
 
 %% Dissolved CO2
 manufacturer='Pro';
-sensors = {coa_ext; cob_ext}; % files holding parameters
+sensors = {cob_ext}; % files holding parameters
+%sensors = {coa_ext; cob_ext}; % files holding parameters
 params  = {'CO_2 concentration (ppm)';
            'Cell Temperature (\circC)';
            'Gas Humidity (mbar)';
