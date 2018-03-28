@@ -1,0 +1,6 @@
+SHELL=/bin/tcsh
+# mail any output to bodcnocs, no matter whose crontab this is
+MAILTO=bodcnocs@bodc.ac.uk
+PATH=/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/nerc/bin:/nerc/etc:/nerc/packages/local/bin:/nerc/packages/utilities/bin:.:/usr/etc
+
+50 */8 * * * /noc/users/bodcnocs/snoms/exec/snoms_matlab_liv.csh > /noc/users/bodcnocs/snoms/logs/snoms_matlab_liv.log
