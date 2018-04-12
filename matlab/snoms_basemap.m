@@ -1,11 +1,21 @@
-function [dp,ln,lt] = snoms_basemap(maxlat, cenlon, lon_range)
+function [dp,ln,lt] = snoms_basemap(maxlat, cenlon, lon_range, d_src)
 
 % Create basemap for snoms position plots from etopo5 data.
 % use +/- maxlat, longitude centred on cenlon
 % Longitude range is global unless lon_range is set in which case
 %   cenlon +/- lon_range/2
 % Reset land values to NaN to reduce plotting time
-% save output ln, lt and depth to snoms_basemap.mat
+% save output ln, lt and depth to snoms_basemap.mat, or alternative 
+%  <d_src>_basemap.mat if d_src set
+
+% Check input parameters
+if nargin>3
+  if ~ischar(d_src)
+    error('Input d_src to snoms_basemap must be a character')
+  end
+else
+  d_src = 'snoms';
+end
 
 % Define region of interest
 if nargin < 3, lon_range = 360; end
@@ -43,4 +53,4 @@ topog=flipud(reshape(data,360*12,180*12)');
 dp = topog(jj,ii);
 dp(dp>0) = NaN;
 
-save('snoms_basemap.mat','dp','ln','lt');
+save([d_src '_basemap.mat'],'dp','ln','lt');
