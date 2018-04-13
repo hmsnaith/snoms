@@ -1,7 +1,9 @@
-function snoms_plots_liv(fyear,fjday,iftest)
+function snoms_plots_liv(fyear,fjday,d_src)
 % Create SNOMS website content for the current deployment
 % Input fyear (year of deployment) and fjday (julian day of deployment)
 % Must predefine environment variable for web root directory (web_out)
+% If d_src is provided, this is an alternative data source - currenty
+% recognises 'maersk' and 'local'
 % Version using seperate concat files for each sensor
 %
 % Outputs text file of current deployment first and last data times
@@ -27,6 +29,14 @@ function snoms_plots_liv(fyear,fjday,iftest)
 % Map of ship track
 % ...
 
+% Check input parameters
+if nargin>2
+  if ~ischar(d_src)
+    error('Input d_src to snoms_plots_liv must be a character')
+  end
+else
+  d_src = 'snoms';
+end
 % Set date strings and values
 start_date=datenum(fyear,1,1) + fjday - 1;
 deploy_date = datestr(start_date,'ddmmmyyyy');
@@ -36,20 +46,23 @@ dir_date = [num2str(fyear,'%4.4d') '_' num2str(fjday,'%3.3d')];
 global merged_dir f_root web_dir t2 x_lab
 
 % Define directory locations and file naming
-if nargin>2
-  % In test mode, use either local or central input, always local output
-  if iftest>0
-    merged_dir='/noc/users/bodcnocs/snoms/test_concat/'; % Use local input data directory
-  else
-    merged_dir='/noc/ote/remotetel/ascdata/snoms/concat/'; % Use OTE concatenated data directory
-  end
-  web_dir_snoms = '/noc/users/bodcnocs/snoms/web'; % testing - output to local directory
-else
-  % In live mode
-  merged_dir='/noc/ote/remotetel/ascdata/SNOMS/concat/'; % Input concatenated data directory
-  web_dir_snoms=getenv('web_out'); % Environment Variable should be set for web_out
-end
+% Set filename root
 f_root = ['all_SNOMS_' deploy_date '.'];
+% In test mode, use either local or central input, always local output
+switch d_src
+  case 'local'
+    merged_dir='/noc/users/bodcnocs/snoms/test_concat/'; % Use local input data directory
+    web_dir_snoms = '/noc/users/bodcnocs/snoms/web'; % testing - output to local directory
+  case 'maersk'
+    merged_dir='/noc/ote/remotetel/ascdata/SNOMS/Maersk/concat/'; % Use OTE concatenated data directory
+    web_dir_snoms=[getenv('web_out') '/maersk']; % Environment Variable should be set for web_out
+    deploy_date = datestr(start_date,'ddmmmyy');
+    f_root = ['all_MAERSK_' deploy_date '.'];
+  otherwise
+    merged_dir='/noc/ote/remotetel/ascdata/SNOMS/concat/'; % Use OTE concatenated data directory
+    web_dir_snoms=getenv('web_out'); % Environment Variable should be set for web_out
+end
+
 web_dir=[web_dir_snoms '/graphs/' dir_date '/']; % Current deployment directory
 text_file=['page_data_' dir_date '.txt']; % web file of current deployment start / end
 % Setting some graph label and file naming defaults
@@ -103,7 +116,7 @@ if stat~=0
 else
   % Save position for later
   pos = [t,v(:,3:4)];
-  % Write time limits to web file of time limits
+  % Write time limits and pos limits to web file of limits
   fid=fopen([web_dir_snoms '/' text_file],'w');
   if fid<=0
     disp(['Warning: error opening ' web_dir_snoms '/' text_file ' to write - not updated']);
@@ -111,6 +124,7 @@ else
   else
     fprintf(fid,'%u %u %s %s', fyear, fjday, datestr(t(1)), datestr(t(end)));
     latest_date = datestr(t(end));
+    fprintf(fid,'\n%f %f %f %f', min(pos(:,2)), max(pos(:,2)), min(pos(:,3)), max(pos(:,3)));
     fclose(fid);
   end
 end
@@ -142,7 +156,6 @@ params  = {'Atmospheric CO_2 concentration (ppm)'};
 paramid = {'co2'};
 cols = 3;
 ifsave = 0;
-limits = [400 700];
 snoms_plot_multi(sensors,params,paramid,cols,manufacturer,f);
 snoms_plot_single(sensors, params, paramid, cols, manufacturer, ifsave);
 
@@ -253,11 +266,19 @@ mm = 1:tint:nt;
 
 % set up the map projection
 figure('visible','off');
-%figure;
-cenlon=180;
-lon_range = 180;
-%maxlat=75;
-maxlat=60;
+% Different setup for Swire and Maersk
+switch d_src
+  case 'maersk'
+    cenlon=-40;
+    lon_range = 100;
+    maxlat=60;
+    topo = load('maersk_basemap.mat');
+  otherwise
+    cenlon=180;
+    lon_range = 180;
+    maxlat=60;
+    topo = load('snoms_basemap.mat');
+end
 %m_proj('miller', 'lat', [-maxlat maxlat], 'lon', [cenlon-(lon_range*.5) cenlon+(lon_range*.5)]);
 axesm('MapProjection','miller','MapLatLimit',[-maxlat maxlat],...
       'MapLonLimit',[cenlon-(lon_range*.5) cenlon+(lon_range*.5)],...
@@ -265,28 +286,18 @@ axesm('MapProjection','miller','MapLatLimit',[-maxlat maxlat],...
       'FontSize',6,...
       'MeridianLabel','on','MLabelParallel','south','ParallelLabel','on');
 
-% Set background bathymetry (use snoms_basemap to generate new base map)
-topo = load('snoms_basemap.mat');
-%m_pcolor(topo.ln,topo.lt,topo.dp); shading flat;
+% Set background bathymetry
 pcolorm(topo.lt,topo.ln,topo.dp);
-
-% plot coastline and grid - now done by axesm
-%set(gca,'color',[.9 .99 1]);     % Trick is to set this *before* the patch call.
-%m_coast('patch',[.7 1 .7],'edgecolor','none');
-%m_grid('linestyle',':','box','fancy','tickdir','in','fontsize',6);
 
 % Plot ship track
 pos(pos(:,3)<cenlon-(lon_range*.5),3) = pos(pos(:,3)<cenlon-(lon_range*.5),3) + 360;
 pos(pos(:,3)>cenlon+(lon_range*.5),3) = pos(pos(:,3)>cenlon+(lon_range*.5),3) - 360;
-%m_track(pos(mm,3),pos(mm,2),'linew',2,'color','r');
 linem(pos(mm,2),pos(mm,3),'LineWidth',2,'Color','r');
 
 % Plot latest location - if its within the last 2 weeks
 tdiff=now-pos(end,1);
 if (tdiff < 14)
-  %m_line(pos(end,3),pos(end,2),'marker','square','markersize',15,'color','k','linew',1);
   linem(pos(end,2),pos(end,3),'Marker','d','MarkerSize',15,'Color','k','LineWidth',1);
-  %m_text((pos(end,3)+2.5),(pos(end,2)+2.5),' Latest','color','k','fontsize',10);
   textm((pos(end,2)+2.5),(pos(end,3)+2.5),' Latest','Color','k','FontSize',10);
 end
 
