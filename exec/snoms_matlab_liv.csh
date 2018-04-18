@@ -38,4 +38,4 @@ snoms_plots_liv(fyear,fjday,'maersk');
 FIN
 
 #ensure permissions set correctly
-chmod 755 $web_out/graphs/latest_maersk/*.{png,jpg}
+chmod 755 $web_out/graphs/maersk/graphs/latest/*.{png,jpg}
