@@ -25,6 +25,8 @@ snoms_plots_liv(fyear,fjday);
 FIN
 
 #ensure permissions set correctly
+echo chmod snoms graphs
+ls -al $web_out/graphs/latest/*.{png,jpg}
 chmod 755 $web_out/graphs/latest/*.{png,jpg}
 
 # Run second for the current Maersk ship
@@ -38,4 +40,6 @@ snoms_plots_liv(fyear,fjday,'maersk');
 FIN
 
 #ensure permissions set correctly
-chmod 755 $web_out/graphs/maersk/graphs/latest/*.{png,jpg}
+echo chmod maersk graphs
+ls -al $web_out/maersk/graphs/latest/*.{png,jpg}
+chmod 755 $web_out/maersk/graphs/latest/*.{png,jpg}

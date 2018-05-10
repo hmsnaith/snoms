@@ -81,7 +81,7 @@ if ~ exist(web_dir,'dir')
   disp(['Web graphs directory ' web_dir ' does not exist - no updating']);
   return
 end
-
+disp (['Reading from ' merged_dir '; Graphs output to ' web_dir_snoms]);
 % File name extensions for files to read
 gps_ext = 'gp2'; % Vessel GPS position (from Met PC)
 ac1_ext = 'ac1'; % Aanderaa Conductivity sensor #1
