@@ -45,6 +45,9 @@ ln = lon(ii); lt=lat(jj);
 
 % Read in data to vector
 fid=fopen('/noc/bodc/central/topography/etopo5/etopo5','r','ieee-be');
+if fid<=0
+  error('Failed to open ETOPO5 file at /noc/bodc/central/topography/etopo5/etopo5');
+end
 data=fread(fid,'int16'); fclose(fid);
 
 % reshape to array - flipped to put South-North oriented

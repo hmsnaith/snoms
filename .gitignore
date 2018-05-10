@@ -5,6 +5,7 @@ web/
 web_online
 logs/
 snoms/
+data/
 
 # File types to ignore
 # Compiled code
