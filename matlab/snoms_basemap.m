@@ -56,4 +56,4 @@ topog=flipud(reshape(data,360*12,180*12)');
 dp = topog(jj,ii);
 dp(dp>0) = NaN;
 
-save([d_src '_basemap.mat'],'dp','ln','lt');
+save([d_src '_basemap.mat'],'cenlon','lon_range','maxlat','dp','ln','lt');

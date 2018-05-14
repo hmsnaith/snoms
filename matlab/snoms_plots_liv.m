@@ -3,7 +3,7 @@ function snoms_plots_liv(fyear,fjday,d_src)
 % Input fyear (year of deployment) and fjday (julian day of deployment)
 % Must predefine environment variable for web root directory (web_out)
 % If d_src is provided, this is an alternative data source - currenty
-% recognises 'maersk' and 'local'
+% recognises 'maersk' and 'snoms'
 % Version using seperate concat files for each sensor
 %
 % Outputs text file of current deployment first and last data times
@@ -264,20 +264,21 @@ mm = 1:tint:nt;
 % Display date approx once / day (interval in minutes)
 %dint = 1440.;
 
-% set up the map projection
+% set up the map projection - read info from basemap
 figure('visible','off');
 % Different setup for Swire and Maersk
-switch d_src
-  case 'maersk'
-    cenlon=-40;
-    lon_range = 100;
-    maxlat=60;
-    topo = load('maersk_basemap.mat');
-  otherwise
-    cenlon=180;
-    lon_range = 180;
-    maxlat=60;
-    topo = load('snoms_basemap.mat');
+% switch d_src
+%   case 'maersk'
+%     cenlon=-40;
+%     lon_range = 100;
+%     maxlat=60;
+%     topo = load('maersk_basemap.mat');
+%   otherwise
+%     cenlon=180;
+%     lon_range = 180;
+%     maxlat=60;
+%     topo = load('snoms_basemap.mat');
+     topo = load([d_src '_basemap.mat']);
 end
 %m_proj('miller', 'lat', [-maxlat maxlat], 'lon', [cenlon-(lon_range*.5) cenlon+(lon_range*.5)]);
 axesm('MapProjection','miller','MapLatLimit',[-maxlat maxlat],...
