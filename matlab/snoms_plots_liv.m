@@ -242,7 +242,6 @@ cols = 3:5; % column in the file that each parameter is held
 snoms_plot_single(sensors,params,paramid,cols,manufacturer);
 
 %% ship position - changed to use MATLAB mapping toolbox functions 27/1/2017
-%addpath('/noc/users/bodcnocs/snoms/matlab/m_map');
 
 % Set area to miss - don't want to advertise ship in pirate active areas
 pirate_box_lon_min=41.5;
@@ -266,21 +265,7 @@ mm = 1:tint:nt;
 
 % set up the map projection - read info from basemap
 figure('visible','off');
-% Different setup for Swire and Maersk
-% switch d_src
-%   case 'maersk'
-%     cenlon=-40;
-%     lon_range = 100;
-%     maxlat=60;
-%     topo = load('maersk_basemap.mat');
-%   otherwise
-%     cenlon=180;
-%     lon_range = 180;
-%     maxlat=60;
-%     topo = load('snoms_basemap.mat');
-     topo = load([d_src '_basemap.mat']);
-end
-%m_proj('miller', 'lat', [-maxlat maxlat], 'lon', [cenlon-(lon_range*.5) cenlon+(lon_range*.5)]);
+topo = load([d_src '_basemap.mat']);
 axesm('MapProjection','miller','MapLatLimit',[-maxlat maxlat],...
       'MapLonLimit',[cenlon-(lon_range*.5) cenlon+(lon_range*.5)],...
       'Grid','on','GLineStyle',':','Frame','on','FFaceColor',[.7 1 .7],...
@@ -315,6 +300,5 @@ fig.PaperUnits = 'inches';
 fig.PaperPosition = [0 0 14 8];
 print([web_dir '/latest_position.jpg'],'-djpeg','-r150');
 close
-
 
 end
