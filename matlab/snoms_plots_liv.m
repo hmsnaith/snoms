@@ -3,7 +3,7 @@ function snoms_plots_liv(fyear,fjday,d_src)
 % Input fyear (year of deployment) and fjday (julian day of deployment)
 % Must predefine environment variable for web root directory (web_out)
 % If d_src is provided, this is an alternative data source - currenty
-% recognises 'maersk' and 'snoms'
+% recognises 'maersk', 'local' and 'snoms'
 % Version using seperate concat files for each sensor
 %
 % Outputs text file of current deployment first and last data times
@@ -81,6 +81,7 @@ if ~ exist(web_dir,'dir')
   disp(['Web graphs directory ' web_dir ' does not exist - no updating']);
   return
 end
+disp(' ')
 disp (['Reading from ' merged_dir '; Graphs output to ' web_dir_snoms]);
 % File name extensions for files to read
 gps_ext = 'gp2'; % Vessel GPS position (from Met PC)
@@ -265,9 +266,10 @@ mm = 1:tint:nt;
 
 % set up the map projection - read info from basemap
 figure('visible','off');
+disp(['Loading basemap: ' d_src '_basemap.mat']);
 topo = load([d_src '_basemap.mat']);
-axesm('MapProjection','miller','MapLatLimit',[-maxlat maxlat],...
-      'MapLonLimit',[cenlon-(lon_range*.5) cenlon+(lon_range*.5)],...
+axesm('MapProjection','miller','MapLatLimit',[-topo.maxlat topo.maxlat],...
+      'MapLonLimit',[topo.cenlon-(topo.lon_range*.5) topo.cenlon+(topo.lon_range*.5)],...
       'Grid','on','GLineStyle',':','Frame','on','FFaceColor',[.7 1 .7],...
       'FontSize',6,...
       'MeridianLabel','on','MLabelParallel','south','ParallelLabel','on');
@@ -276,8 +278,8 @@ axesm('MapProjection','miller','MapLatLimit',[-maxlat maxlat],...
 pcolorm(topo.lt,topo.ln,topo.dp);
 
 % Plot ship track
-pos(pos(:,3)<cenlon-(lon_range*.5),3) = pos(pos(:,3)<cenlon-(lon_range*.5),3) + 360;
-pos(pos(:,3)>cenlon+(lon_range*.5),3) = pos(pos(:,3)>cenlon+(lon_range*.5),3) - 360;
+pos(pos(:,3)<topo.cenlon-(topo.lon_range*.5),3) = pos(pos(:,3)<topo.cenlon-(topo.lon_range*.5),3) + 360;
+pos(pos(:,3)>topo.cenlon+(topo.lon_range*.5),3) = pos(pos(:,3)>topo.cenlon+(topo.lon_range*.5),3) - 360;
 linem(pos(mm,2),pos(mm,3),'LineWidth',2,'Color','r');
 
 % Plot latest location - if its within the last 2 weeks
